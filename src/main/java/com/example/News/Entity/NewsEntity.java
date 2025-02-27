@@ -13,7 +13,7 @@ public class NewsEntity {
     private int newsId;
     private String title;
 
-    @Lob
+    @Column(length = 5000)
     private String body;
 
     private String summary;

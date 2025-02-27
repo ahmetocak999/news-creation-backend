@@ -1,7 +1,6 @@
 package com.example.News.Controller;
 
 import com.example.News.Service.MagazineService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,15 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pdf")
+@RequestMapping("/magazine")
 public class MagazineController {
 
-    @Autowired
-    private MagazineService magazineService;
+    private final MagazineService magazineService;
 
+    public MagazineController(MagazineService magazineService) {
+        this.magazineService = magazineService;
+    }
 
     @GetMapping("/generate")
-    public ResponseEntity<byte[]> generatePdf(@RequestParam List<Integer> newsIds) {
+    public ResponseEntity<byte[]> generate(@RequestParam List<Integer> newsIds) {
         try {
             byte[] pdfContent = magazineService.createMagazinePdf(newsIds);
             HttpHeaders headers = new HttpHeaders();
