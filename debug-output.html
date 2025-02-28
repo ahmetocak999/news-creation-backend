@@ -118,55 +118,77 @@
 <div id="contents-page">
     <h1 class="contents-title">İçindekiler</h1>
     <ul class="contents-list">
-        #set($pageNumber = 1)
-        #set($articlesPerPage = 4) <!-- Sayfada gösterilecek haber sayısı -->
-        #set($articleCounter = 0) <!-- Haberlerin sayısını takip etmek için sayaç -->
+ <!-- Sayfada gösterilecek haber sayısı -->
+ <!-- Haberlerin sayısını takip etmek için sayaç -->
 
-        #foreach($news in $newsList)
-            #if($articleCounter % $articlesPerPage == 0 && $articleCounter != 0)
-                <!-- 4 haberden sonra yeni sayfa numarası -->
-                #set($pageNumber = $pageNumber + 1)
-            #end
             <li>
                 <!-- Sayfa numarasına göre yönlendirme -->
-                <a href="#page$pageNumber-$articleCounter">$news.title</a> - Sayfa $pageNumber
+                <a href="#page1-0">Ahmet</a> - Sayfa 1
             </li>
-            #set($articleCounter = $articleCounter + 1) <!-- Sayaç artır -->
-        #end
+ <!-- Sayaç artır -->
+            <li>
+                <!-- Sayfa numarasına göre yönlendirme -->
+                <a href="#page1-1">karaköz</a> - Sayfa 1
+            </li>
+ <!-- Sayaç artır -->
+            <li>
+                <!-- Sayfa numarasına göre yönlendirme -->
+                <a href="#page1-2">İmamoğlu muhalefet turuna çıkacak: Dağılan muhalefet İmamoğlu'nun adaylığında buluşabilir mi?</a> - Sayfa 1
+            </li>
+ <!-- Sayaç artır -->
+            <li>
+                <!-- Sayfa numarasına göre yönlendirme -->
+                <a href="#page1-3">CHP'li Beykoz Belediye Başkanı Alaattin Köseler ile 20 kişi gözaltına alındı</a> - Sayfa 1
+            </li>
+ <!-- Sayaç artır -->
     </ul>
 </div>
 
 
 <div class="content-container">
-    #set($pageNumber = 1)
-    #set($articlesPerPage = 4) <!-- Sayfada gösterilecek haber sayısı -->
-    #set($articleCounter = 0) <!-- Haberlerin sayısını takip etmek için sayaç -->
+ <!-- Sayfada gösterilecek haber sayısı -->
+ <!-- Haberlerin sayısını takip etmek için sayaç -->
 
-    #if($newsList && $newsList.size() > 0)
-        #foreach($news in $newsList)
-            #if($articleCounter % $articlesPerPage == 0 && $articleCounter != 0)
-                <!-- 4 haberden sonra yeni sayfa numarası -->
-                #set($pageNumber = $pageNumber + 1)
-            #end
-            <div class="article" id="page$pageNumber-$articleCounter">
-                <h2 class="article-title">$news.title</h2>
+            <div class="article" id="page1-0">
+                <h2 class="article-title">Ahmet</h2>
                 <div class="article-summary-container">
-                    $news.summary
+                    Ahmetocak55
                 </div>
                 <div class="article-body">
-                    $news.body
+                    98403
                 </div>
             </div>
-            #set($articleCounter = $articleCounter + 1) <!-- Sayaç artır -->
-        #end
-    #else
-        <div class="article">
-            <h2 class="article-title">İçerik Bulunmamaktadır</h2>
-            <div class="article-body">
-                <p>Bu magazin sayısında henüz içerik bulunmamaktadır.</p>
+ <!-- Sayaç artır -->
+            <div class="article" id="page1-1">
+                <h2 class="article-title">karaköz</h2>
+                <div class="article-summary-container">
+                    mehmet55
+                </div>
+                <div class="article-body">
+                    <a href="https://www.example.com" target="_blank">Bu bir linktir</a>
+                </div>
             </div>
-        </div>
-    #end
+ <!-- Sayaç artır -->
+            <div class="article" id="page1-2">
+                <h2 class="article-title">İmamoğlu muhalefet turuna çıkacak: Dağılan muhalefet İmamoğlu'nun adaylığında buluşabilir mi?</h2>
+                <div class="article-summary-container">
+                    İmamoğlu, yarın CHP Genel Merkez'inde düzenlenecek etkinlikle partililere hitap edecek ve adaylığının gerekçelerini açıklayacak.  
+                </div>
+                <div class="article-body">
+                    <b> Cumhurbaşkanı adayını 23 Mart'ta parti üyelerinin katılımıyla yapılacak önseçimde belirlemeye hazırlanan CHP'nin Genel Başkanı Özgür Özel, başta eski ittifak ortakları olmak üzere muhalefet partileri ile bir süredir görüşme trafiği yürütüyor. </b>
+                </div>
+            </div>
+ <!-- Sayaç artır -->
+            <div class="article" id="page1-3">
+                <h2 class="article-title">CHP'li Beykoz Belediye Başkanı Alaattin Köseler ile 20 kişi gözaltına alındı</h2>
+                <div class="article-summary-container">
+                    İstanbul'da CHP'li Beykoz Belediye Başkanı Alaattin Köseler ile 20 kişi ihaleye fesat karıştırma suçundan yürütülen soruşturma kapsamında gözaltına alındı.
+                </div>
+                <div class="article-body">
+                    <b> 17 şüpheli hakkında da ihaleye fesat karıştırma ve suç işlemek amacıyla örgüt kurma, üyelik ve yardım suçlarından yakalama, gözaltı, arama ve el koyma talimatı verildi. </b>
+                </div>
+            </div>
+ <!-- Sayaç artır -->
 </div>
 
 </body>

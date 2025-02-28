@@ -3,17 +3,18 @@ package com.example.News.Service;
 import com.example.News.Entity.NewsEntity;
 import com.example.News.Repo.NewsRepo;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import com.lowagie.text.pdf.BaseFont;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 
 import java.io.ByteArrayOutputStream;
-
-import java.io.File;
-import java.io.StringWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -25,7 +26,9 @@ import java.util.Locale;
 public class MagazineService {
     private final NewsRepo newsRepo;
     private final TemplateService templateService;
+    private static final Logger logger = LoggerFactory.getLogger(MagazineService.class);
 
+    @Autowired
     public MagazineService(NewsRepo newsRepo, TemplateService templateService) {
         this.newsRepo = newsRepo;
         this.templateService = templateService;
@@ -34,39 +37,54 @@ public class MagazineService {
     public byte[] createMagazinePdf(List<Integer> newsIds) throws Exception {
         List<NewsEntity> newsList = newsRepo.findAllById(newsIds);
 
-        // Locale'i belirtmek önemli, burada Locale.TR_LANG.TR kullanabilirsiniz
+        // Locale'i belirtmek önemli
         Locale locale = new Locale("tr", "TR");  // Türkçe Locale
 
         // HTML içeriğini Velocity şablonundan al
         String htmlContent = templateService.generateHtml("news.vm", newsList, locale);
 
+        // Debug için HTML içeriğini dosyaya yazabilirsiniz
+        try {
+            Files.write(Paths.get("debug-output.html"), htmlContent.getBytes(StandardCharsets.UTF_8));
+            logger.info("Debug HTML dosyaya yazıldı");
+        } catch (Exception e) {
+            logger.warn("Debug HTML dosyası yazılamadı");
+        }
+
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ITextRenderer renderer = new ITextRenderer();
 
-        // Türkçe karakter desteği için fontları ekle
-        ClassPathResource fontResource = new ClassPathResource("fonts/DejaVuSans.ttf");
-        renderer.getFontResolver().addFont(fontResource.getURL().toString(), "Identity-H", true);
+        try {
+            // Eski flying-saucer/OpenPDF yerine iText 7 kullanmayı değerlendirebilirsiniz
+            ITextRenderer renderer = new ITextRenderer();
+            ITextFontResolver fontResolver = renderer.getFontResolver();
 
-        ClassPathResource fontResource1 = new ClassPathResource("fonts/DejaVuSans-Bold.ttf");
-        renderer.getFontResolver().addFont(fontResource1.getURL().toString(), "Identity-H", true);
+            // Font ayarları - burada tam dosya yolu kullanın
+            try {
+                fontResolver.addFont(new ClassPathResource("fonts/DejaVuSans.ttf").getURL().toString(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                fontResolver.addFont(new ClassPathResource("fonts/DejaVuSans-Bold.ttf").getURL().toString(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                fontResolver.addFont(new ClassPathResource("fonts/DejaVuSerif.ttf").getURL().toString(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                fontResolver.addFont(new ClassPathResource("fonts/DejaVuSerif-Bold.ttf").getURL().toString(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            } catch (IOException e) {
+                logger.error("Font yükleme hatası: ", e);
+                throw e;
+            }
+            // PDF oluşturma öncesi log
+            logger.info("PDF oluşturmaya başlanıyor...");
 
-        ClassPathResource fontResource2 = new ClassPathResource("fonts/DejaVuSerif.ttf");
-        renderer.getFontResolver().addFont(fontResource2.getURL().toString(), "Identity-H", true);
+            renderer.setDocumentFromString(htmlContent);
+            renderer.layout();
+            renderer.createPDF(byteArrayOutputStream, true); // true = output streaming
 
-        ClassPathResource fontResource3 = new ClassPathResource("fonts/DejaVuSerif-Bold.ttf");
-        renderer.getFontResolver().addFont(fontResource3.getURL().toString(), "Identity-H", true);
-
-
-
-
-        renderer.setDocumentFromString(htmlContent);
-        renderer.layout();
-        renderer.createPDF(byteArrayOutputStream);
-
-        return byteArrayOutputStream.toByteArray();
+            logger.info("PDF başarıyla oluşturuldu");
+            return byteArrayOutputStream.toByteArray();
+        } catch (Exception e) {
+            logger.error("PDF oluşturma hatası: ", e);
+            throw e;
+        } finally {
+            byteArrayOutputStream.close();
+        }
     }
 }
-
 
 
 
